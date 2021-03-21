@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Table,
   TableBody,
@@ -16,17 +16,31 @@ import {
 import DeleteIcon from '@material-ui/icons/Delete';
 import EditIcon from '@material-ui/icons/Edit';
 import AddIcon from '@material-ui/icons/Add';
-import AddItemModal from '../add-item-modal/add-item-modal';
+import AdminForm from '../admin-form/admin-form';
+import database from '../../utils/database';
 
-export default function Day({ title, items = {}, handleRemoveItem }) {
-  const [modalIsOpen, setModalIsOpen] = useState(false);
+export default function Day({ name }) {
+  const [addItemModalIsOpen, setAddItemModalIsOpen] = useState(false);
+  const [editItemModalIsOpen, setEditItemModalIsOpen] = useState(false);
+  const [editItemId, setEditItemId] = useState(null);
+  const [data, setData] = useState({});
 
-  const handleOpen = (open) => {
-    if (open) {
-      setModalIsOpen(true);
-    } else {
-      setModalIsOpen(false);
-    }
+  useEffect(() => {
+    database.select(`${name}`, (schedule) => {
+      setData(schedule);
+    });
+  }, [name]);
+
+  const removeitem = (id) => {
+    database.remove(`${name}/${id}`);
+  };
+
+  const handleAddItemModalOpen = (open) => {
+    setAddItemModalIsOpen(open);
+  };
+
+  const handleEditItemModalOpen = (open) => {
+    setEditItemModalIsOpen(open);
   };
 
   return (
@@ -34,7 +48,7 @@ export default function Day({ title, items = {}, handleRemoveItem }) {
       <Card>
         <CardContent>
           <Typography align='center' variant='h5'>
-            {title}
+            {name}
           </Typography>
           <TableContainer component={Paper}>
             <Table size='small' aria-label='a dense table'>
@@ -50,29 +64,33 @@ export default function Day({ title, items = {}, handleRemoveItem }) {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {Object.keys(items).map((id, i) => {
-                  return (
-                    <TableRow key={id}>
-                      <TableCell component='th' scope='row'>
-                        {i + 1}
-                      </TableCell>
-                      <TableCell align='left'>{items[id].lesson}</TableCell>
-                      <TableCell align='right'>{items[id].room}</TableCell>
-                      <TableCell align='right'>{items[id].teacher}</TableCell>
-                      <TableCell align='right'>{items[id].time}</TableCell>
-                      <TableCell align='center'>
-                        <Button onClick={() => handleRemoveItem(title, id)} color='secondary'>
-                          <DeleteIcon color='secondary' />
-                        </Button>
-                      </TableCell>
-                      <TableCell align='center'>
-                        <Button color='primary'>
-                          <EditIcon color='primary' />
-                        </Button>
-                      </TableCell>
-                    </TableRow>
-                  );
-                })}
+                {Object.keys(data || {}).map((id, i) => (
+                  <TableRow key={id}>
+                    <TableCell component='th' scope='row'>
+                      {i + 1}
+                    </TableCell>
+                    <TableCell align='left'>{data[id].lesson}</TableCell>
+                    <TableCell align='right'>{data[id].room}</TableCell>
+                    <TableCell align='right'>{data[id].teacher}</TableCell>
+                    <TableCell align='right'>{data[id].time}</TableCell>
+                    <TableCell align='center'>
+                      <Button onClick={() => removeitem(id)} color='secondary'>
+                        <DeleteIcon color='secondary' />
+                      </Button>
+                    </TableCell>
+                    <TableCell align='center'>
+                      <Button
+                        onClick={() => {
+                          setEditItemModalIsOpen(true);
+                          setEditItemId(id);
+                        }}
+                        color='primary'
+                      >
+                        <EditIcon color='primary' />
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                ))}
               </TableBody>
             </Table>
           </TableContainer>
@@ -80,7 +98,7 @@ export default function Day({ title, items = {}, handleRemoveItem }) {
         <CardActions>
           <Button
             onClick={() => {
-              handleOpen(true);
+              handleAddItemModalOpen(true);
             }}
             variant='outlined'
           >
@@ -88,7 +106,19 @@ export default function Day({ title, items = {}, handleRemoveItem }) {
           </Button>
         </CardActions>
       </Card>
-      <AddItemModal name={title} handleOpen={handleOpen} isOpen={modalIsOpen} />
+      <AdminForm
+        name={name}
+        handleOpen={handleAddItemModalOpen}
+        isOpen={addItemModalIsOpen}
+        type='add'
+      />
+      <AdminForm
+        name={name}
+        id={editItemId}
+        handleOpen={handleEditItemModalOpen}
+        isOpen={editItemModalIsOpen}
+        type='edit'
+      />
     </>
   );
 }

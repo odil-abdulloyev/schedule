@@ -29,23 +29,13 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function AddItemModal({ name, handleOpen, isOpen }) {
+export default function AdminForm({ name, id, handleOpen, isOpen, type }) {
   const classes = useStyles();
   const [modalStyle] = useState(getModalStyle);
   const [lesson, setLesson] = useState('');
   const [room, setRoom] = useState('');
   const [teacher, setTeacher] = useState('');
   const [time, setTime] = useState(new Date());
-
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    database.push(name, { lesson, room, teacher, time: formatTime(time) });
-    handleOpen(false);
-    setLesson('');
-    setRoom('');
-    setTeacher('');
-    setTime(new Date());
-  };
 
   const handleLessonChange = (event) => {
     setLesson(event.target.value);
@@ -61,6 +51,25 @@ export default function AddItemModal({ name, handleOpen, isOpen }) {
 
   const handleTimeChange = (time) => {
     setTime(time);
+  };
+
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    handleOpen(false);
+    setLesson('');
+    setRoom('');
+    setTeacher('');
+    setTime(new Date());
+    switch (type) {
+      case 'add':
+        database.push(name, { lesson, room, teacher, time: formatTime(time) });
+        break;
+      case 'edit':
+        database.update(`${name}/${id}`, { lesson, room, teacher, time: formatTime(time) });
+        break;
+      default:
+        return;
+    }
   };
 
   return (
