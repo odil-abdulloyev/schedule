@@ -4,8 +4,8 @@ import Schedule from '../../components/schedule/schedule';
 
 export default function Admin() {
   return (
-    <Container>
-      <Schedule title='TUIT Software Engineering Faculty' />
+    <Container maxWidth='md'>
+      <Schedule group='321-19' controls />
     </Container>
   );
 }

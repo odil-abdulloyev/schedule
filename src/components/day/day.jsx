@@ -12,6 +12,7 @@ import {
   Card,
   CardContent,
   CardActions,
+  makeStyles,
 } from '@material-ui/core/';
 import DeleteIcon from '@material-ui/icons/Delete';
 import EditIcon from '@material-ui/icons/Edit';
@@ -19,7 +20,17 @@ import AddIcon from '@material-ui/icons/Add';
 import AdminForm from '../admin-form/admin-form';
 import database from '../../utils/database';
 
-export default function Day({ name }) {
+const useStyles = makeStyles({
+  root: {
+    color: '#585858',
+  },
+  card: {
+    marginBottom: '2rem',
+  },
+});
+
+export default function Day({ name, controls }) {
+  const classes = useStyles();
   const [addItemModalIsOpen, setAddItemModalIsOpen] = useState(false);
   const [editItemModalIsOpen, setEditItemModalIsOpen] = useState(false);
   const [editItemId, setEditItemId] = useState(null);
@@ -45,50 +56,78 @@ export default function Day({ name }) {
 
   return (
     <>
-      <Card>
+      <Card className={classes.card}>
         <CardContent>
-          <Typography align='center' variant='h5'>
-            {name}
+          <Typography className={classes.root} align='center'>
+            <h2>{name}</h2>
           </Typography>
           <TableContainer component={Paper}>
             <Table size='small' aria-label='a dense table'>
               <TableHead>
                 <TableRow>
-                  <TableCell>#</TableCell>
-                  <TableCell align='left'>Lesson</TableCell>
-                  <TableCell align='right'>Room</TableCell>
-                  <TableCell align='right'>Teacher</TableCell>
-                  <TableCell align='right'>Time</TableCell>
-                  <TableCell align='center'>Remove</TableCell>
-                  <TableCell align='center'>Edit</TableCell>
+                  <TableCell className={classes.root}>#</TableCell>
+                  <TableCell className={classes.root} align='center'>
+                    Lesson
+                  </TableCell>
+                  <TableCell className={classes.root} align='center'>
+                    Room
+                  </TableCell>
+                  <TableCell className={classes.root} align='center'>
+                    Teacher
+                  </TableCell>
+                  <TableCell className={classes.root} align='center'>
+                    Time
+                  </TableCell>
+                  {controls && (
+                    <TableCell className={classes.root} align='center'>
+                      Remove
+                    </TableCell>
+                  )}
+                  {controls && (
+                    <TableCell className={classes.root} align='center'>
+                      Edit
+                    </TableCell>
+                  )}
                 </TableRow>
               </TableHead>
               <TableBody>
                 {Object.keys(data || {}).map((id, i) => (
                   <TableRow key={id}>
-                    <TableCell component='th' scope='row'>
+                    <TableCell className={classes.root} component='th' scope='row'>
                       {i + 1}
                     </TableCell>
-                    <TableCell align='left'>{data[id].lesson}</TableCell>
-                    <TableCell align='right'>{data[id].room}</TableCell>
-                    <TableCell align='right'>{data[id].teacher}</TableCell>
-                    <TableCell align='right'>{data[id].time}</TableCell>
-                    <TableCell align='center'>
-                      <Button onClick={() => removeitem(id)} color='secondary'>
-                        <DeleteIcon color='secondary' />
-                      </Button>
+                    <TableCell className={classes.root} align='center'>
+                      {data[id].lesson}
                     </TableCell>
-                    <TableCell align='center'>
-                      <Button
-                        onClick={() => {
-                          setEditItemModalIsOpen(true);
-                          setEditItemId(id);
-                        }}
-                        color='primary'
-                      >
-                        <EditIcon color='primary' />
-                      </Button>
+                    <TableCell className={classes.root} align='center'>
+                      {data[id].room}
                     </TableCell>
+                    <TableCell className={classes.root} align='center'>
+                      {data[id].teacher}
+                    </TableCell>
+                    <TableCell className={classes.root} align='center'>
+                      {data[id].time}
+                    </TableCell>
+                    {controls && (
+                      <TableCell align='center'>
+                        <Button onClick={() => removeitem(id)} color='secondary'>
+                          <DeleteIcon color='secondary' />
+                        </Button>
+                      </TableCell>
+                    )}
+                    {controls && (
+                      <TableCell align='center'>
+                        <Button
+                          onClick={() => {
+                            setEditItemModalIsOpen(true);
+                            setEditItemId(id);
+                          }}
+                          color='primary'
+                        >
+                          <EditIcon color='primary' />
+                        </Button>
+                      </TableCell>
+                    )}
                   </TableRow>
                 ))}
               </TableBody>
