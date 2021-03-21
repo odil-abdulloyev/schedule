@@ -135,14 +135,16 @@ export default function Day({ name, controls }) {
           </TableContainer>
         </CardContent>
         <CardActions>
-          <Button
-            onClick={() => {
-              handleAddItemModalOpen(true);
-            }}
-            variant='outlined'
-          >
-            <AddIcon />
-          </Button>
+          {controls && (
+            <Button
+              onClick={() => {
+                handleAddItemModalOpen(true);
+              }}
+              variant='outlined'
+            >
+              <AddIcon />
+            </Button>
+          )}
         </CardActions>
       </Card>
       <AdminForm
