@@ -45,6 +45,7 @@
     ]
   },
   "devDependencies": {
+    "@material-ui/lab": "^4.0.0-alpha.57",
     "firebase": "^8.3.1"
   }
 }

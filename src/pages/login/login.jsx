@@ -11,8 +11,13 @@ import {
   Container,
   FormControlLabel,
   Checkbox,
+  Collapse,
 } from '@material-ui/core/';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
+import CloseIcon from '@material-ui/icons/Close';
+import IconButton from '@material-ui/core/IconButton';
+
+import Alert from '@material-ui/lab/Alert';
 import axios from 'axios';
 
 function Copyright() {
@@ -48,12 +53,13 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function Login({ history }) {
+export default function Login({ history, login }) {
   const classes = useStyles();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [passwordInputType, setPasswordInputType] = useState('password');
+  const [loginError, setLoginError] = useState(false);
 
   const handleEmailChange = (event) => {
     setEmail(event.target.value);
@@ -80,9 +86,10 @@ export default function Login({ history }) {
         'https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=AIzaSyAZo91RB4gN6KUYjsbHgy1YX6X_1JTehM0',
         loginData
       );
+      login(true);
       history.push('/admin');
     } catch (error) {
-      alert(error.message);
+      setLoginError(true);
     }
     setEmail('');
     setPassword('');
@@ -92,6 +99,29 @@ export default function Login({ history }) {
 
   return (
     <Container component='main' maxWidth='xs'>
+      {loginError && (
+        <div className={classes.root}>
+          <Collapse in={loginError}>
+            <Alert
+              severity='error'
+              action={
+                <IconButton
+                  aria-label='close'
+                  color='inherit'
+                  size='small'
+                  onClick={() => {
+                    setLoginError(false);
+                  }}
+                >
+                  <CloseIcon fontSize='inherit' />
+                </IconButton>
+              }
+            >
+              Invalid email or password
+            </Alert>
+          </Collapse>
+        </div>
+      )}
       <CssBaseline />
       <div className={classes.paper}>
         <Avatar className={classes.avatar}>
