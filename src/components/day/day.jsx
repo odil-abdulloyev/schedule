@@ -13,6 +13,7 @@ import {
   CardContent,
   CardActions,
   makeStyles,
+  CircularProgress,
 } from '@material-ui/core/';
 import DeleteIcon from '@material-ui/icons/Delete';
 import EditIcon from '@material-ui/icons/Edit';
@@ -20,14 +21,19 @@ import AddIcon from '@material-ui/icons/Add';
 import AdminForm from '../admin-form/admin-form';
 import database from '../../utils/database';
 
-const useStyles = makeStyles({
+const useStyles = makeStyles((theme) => ({
   root: {
     color: '#585858',
   },
   card: {
     marginBottom: '2rem',
   },
-});
+  loader: {
+    textAlign: 'center',
+    paddingTop: 15,
+    color: '#585858',
+  },
+}));
 
 export default function Day({ name, controls }) {
   const classes = useStyles();
@@ -35,10 +41,12 @@ export default function Day({ name, controls }) {
   const [editItemModalIsOpen, setEditItemModalIsOpen] = useState(false);
   const [editItemId, setEditItemId] = useState(null);
   const [data, setData] = useState({});
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     database.select(`${name}`, (schedule) => {
       setData(schedule);
+      setLoading(false);
     });
   }, [name]);
 
@@ -133,6 +141,11 @@ export default function Day({ name, controls }) {
               </TableBody>
             </Table>
           </TableContainer>
+          {loading && (
+            <div className={classes.loader}>
+              <CircularProgress />
+            </div>
+          )}
         </CardContent>
         <CardActions>
           {controls && (
