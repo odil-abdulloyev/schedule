@@ -19,10 +19,10 @@ export default function App() {
     <Switch>
       <Route path='/' exact component={Home} />
       <Route path='/login' render={(props) => <Login login={setLoggedIn} {...props} />} />
-      <Redirect from='/admin' to='login' />
+      <Redirect from='/admin' to='/login' />
       <Route path='*' component={NotFound} />
     </Switch>
   );
 
-  return <BrowserRouter>{routes}</BrowserRouter>;
+  return <BrowserRouter basename={process.env.PUBLIC_URL}>{routes}</BrowserRouter>;
 }
