@@ -78,6 +78,9 @@ export default function Day({ name, controls }) {
                     Lesson
                   </TableCell>
                   <TableCell className={classes.root} align='center'>
+                    Type
+                  </TableCell>
+                  <TableCell className={classes.root} align='center'>
                     Room
                   </TableCell>
                   <TableCell className={classes.root} align='center'>
@@ -106,6 +109,9 @@ export default function Day({ name, controls }) {
                     </TableCell>
                     <TableCell className={classes.root} align='center'>
                       {data[id].lesson}
+                    </TableCell>
+                    <TableCell className={classes.root} align='center'>
+                      {data[id].lessonType}
                     </TableCell>
                     <TableCell className={classes.root} align='center'>
                       {data[id].room}

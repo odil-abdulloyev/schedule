@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import { Button, TextField, Modal, Backdrop, Fade } from '@material-ui/core';
+import { Button, TextField, Modal, Backdrop, Fade, Select, MenuItem } from '@material-ui/core';
 import { MuiPickersUtilsProvider, KeyboardTimePicker } from '@material-ui/pickers';
 import 'date-fns';
 import DateFnsUtils from '@date-io/date-fns';
@@ -27,18 +27,26 @@ const useStyles = makeStyles((theme) => ({
   input: {
     display: 'block',
   },
+  select: {
+    marginTop: 15,
+  },
 }));
 
 export default function AdminForm({ name, id, handleOpen, isOpen, type }) {
   const classes = useStyles();
   const [modalStyle] = useState(getModalStyle);
   const [lesson, setLesson] = useState('');
+  const [lessonType, setLessonType] = useState('Лекция');
   const [room, setRoom] = useState('');
   const [teacher, setTeacher] = useState('');
   const [time, setTime] = useState(new Date());
 
   const handleLessonChange = (event) => {
     setLesson(event.target.value);
+  };
+
+  const handleLessonTypeChange = (event) => {
+    setLessonType(event.target.value);
   };
 
   const handleRoomChange = (event) => {
@@ -57,15 +65,22 @@ export default function AdminForm({ name, id, handleOpen, isOpen, type }) {
     event.preventDefault();
     handleOpen(false);
     setLesson('');
+    setLessonType('Лекция');
     setRoom('');
     setTeacher('');
     setTime(new Date());
     switch (type) {
       case 'add':
-        database.push(name, { lesson, room, teacher, time: formatTime(time) });
+        database.push(name, { lesson, lessonType, room, teacher, time: formatTime(time) });
         break;
       case 'edit':
-        database.update(`${name}/${id}`, { lesson, room, teacher, time: formatTime(time) });
+        database.update(`${name}/${id}`, {
+          lesson,
+          lessonType,
+          room,
+          teacher,
+          time: formatTime(time),
+        });
         break;
       default:
         return;
@@ -94,6 +109,11 @@ export default function AdminForm({ name, id, handleOpen, isOpen, type }) {
             label='Lesson'
             required
           />
+          <Select className={classes.select} value={lessonType} onChange={handleLessonTypeChange}>
+            <MenuItem value='Лекция'>Лекция</MenuItem>
+            <MenuItem value='Практика'>Практика</MenuItem>
+            <MenuItem value='Лабораторная'>Лабораторная</MenuItem>
+          </Select>
           <TextField
             className={classes.input}
             onChange={handleRoomChange}
